@@ -97,4 +97,94 @@ As mentioned in description of the question (point 5), the error function (mse) 
 By using the closed form, we get the point corresponding to minimum mse error. As we compute the parameters based on training data, the training loss is minimum at this point. \\
 Therefore, training loss for solution of \verb!singlevar_grad()! can never be strictly less than that of the solution obtained by \verb!singlevar_closedform()!.
 
+
+\newpage
+\section{OLS and Ridge Regression}
+To avoid confusion in lab part where we should not regularize the bias term, I am considering the bias to be separate for now, i.e. apart from $W$ the weights to be learnt, we also have to learn $b$ the bias term. \\
+
+Notation: \\
+$\mathbf{X}$ is $N \times d$ matrix, \\
+$\mathbf{Y}$ is $N \times 1$ vector, \\
+$\hat{\mathbf{Y}}$ is $N \times 1$ vector, \\
+$\mathbf{1_N}$ is $N \times 1$ vector (all 1s), \\
+$\mathbf{W}$ is $d \times 1$ vector, \\
+$\mathbf{x_i}$ is $d \times 1$ vector (i$^\text{th}$ observed sample), \\
+$y_i$ is scalar (i$^\text{th}$ observed output), \\
+$w_i$ is scalar (weight for i$^\text{th}$ feature), \\
+$b$ is scalar.
+
+\subsection{CS337: Theory}
+\subsubsection{}
+$\hat{\mathbf{Y}} = \mathbf{X} \mathbf{W} + b \mathbf{1_N}$, where $\mathbf{W}$ and $b$ are learnt from the given $N$ samples (which may be noisy).
+
+\subsubsection{}
+Assuming that partial derivative is $1 \times d$ row vector (numerator layout).
+\begin{equation*}
+  \begin{aligned}
+    mse(\mathbf{W},b)                                      & = \frac{1}{N} \sum_{i=1}^N ((\mathbf{W}^T \mathbf{x_i} + b) - y_i)^2                                     \\
+    \frac{\partial mse(\mathbf{W},b)}{\partial \mathbf{W}} & = \frac{1}{N} \sum_{i=1}^N 2 \ ((\mathbf{W}^T \mathbf{x_i} + b) - y_i) \ \mathbf{x_i}^T                  \\
+                                                           & = \frac{2}{N} \sum_{i=1}^N (\mathbf{W}^T \mathbf{x_i} + b - y_i) \ \mathbf{x_i}^T                        \\
+                                                           & = \frac{2}{N} \ \text{dot}(\text{dot}(\mathbf{X}, \mathbf{W}) + b \mathbf{1_N} - \mathbf{Y}, \mathbf{X}) \\
+    \frac{\partial mse(\mathbf{W},b)}{\partial b}          & = \frac{1}{N} \sum_{i=1}^N 2 \cdot ((\mathbf{W}^T \mathbf{x_i} + b) - y_i)                               \\
+                                                           & = \frac{2}{N} \sum_{i=1}^N (\mathbf{W}^T \mathbf{x_i} + b - y_i)                                         \\
+                                                           & = \frac{2}{N} \ \text{sum}(\text{dot}(\mathbf{X}, \mathbf{W})  + b \mathbf{1_N} - \mathbf{Y})
+  \end{aligned}
+\end{equation*}
+
+\subsubsection{}
+Assuming that partial derivative is $1 \times d$ row vector (denominator layout).
+\begin{equation*}
+  \begin{aligned}
+    mse(\mathbf{W},b)                                      & = \lambda || \mathbf{W} ||_2^2 + \frac{1}{N} \sum_{i=1}^N ((\mathbf{W}^T \mathbf{x_i} + b) - y_i)^2                               \\
+    \frac{\partial mse(\mathbf{W},b)}{\partial \mathbf{W}} & = 2 \lambda \mathbf{W}^T + \frac{1}{N} \sum_{i=1}^N 2 \ ((\mathbf{W}^T \mathbf{x_i} + b) - y_i) \ \mathbf{x_i}^T                  \\
+                                                           & = 2 \lambda \mathbf{W}^T + \frac{2}{N} \sum_{i=1}^N (\mathbf{W}^T \mathbf{x_i} + b - y_i) \ \mathbf{x_i}^T                        \\
+                                                           & = 2 \lambda \mathbf{W}^T + \frac{2}{N} \ \text{dot}(\text{dot}(\mathbf{X}, \mathbf{W}) + b \mathbf{1_N} - \mathbf{Y}, \mathbf{X}) \\
+    \frac{\partial mse(\mathbf{W},b)}{\partial b}          & = \frac{1}{N} \sum_{i=1}^N 2 \cdot ((\mathbf{W}^T \mathbf{x_i} + b) - y_i)                                                        \\
+                                                           & = \frac{2}{N} \sum_{i=1}^N (\mathbf{W}^T \mathbf{x_i} + b - y_i)                                                                  \\
+                                                           & = \frac{2}{N} \ \text{sum}(\text{dot}(\mathbf{X}, \mathbf{W})  + b \mathbf{1_N} - \mathbf{Y})
+  \end{aligned}
+\end{equation*}
+
+\subsubsection{}
+Closed form of OLS is $\mathbf{W} = (\mathbf{X}^T \mathbf{X})^{-1} \mathbf{X}^T \mathbf{Y}$. \\
+This closed form is not applicable when $\mathbf{X}^T \mathbf{X}$ is not invertible (is singular). \\
+This happens when $\mathbf{X}$ is not full column rank, i.e. the columns (features) of $\mathbf{X}$ are linearly dependent. \\
+We don't have a unique solution and therefore can't have a closed form. \\
+We actually have infinite solutions (of $\mathbf{W}$). \\
+(We can't have no solutions of OLS as it is a minimization problem) \\
+Gradient descent therefore would converge towards these solutions. \\
+(Depending on the starting point, it would descent to one of these solutions)
+
+\newpage
+\subsection{CS335: Lab}
+\subsubsection{}
+Code for the functions \verb!mse_multi_var()! and \verb!mse_regularized()! updated in notebook.
+
+\subsubsection{}
+Code for the functions \verb!multivar_grad()! and \verb!multivar_closedform()! updated in notebook.
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.7]{multivar_grad.png}
+  \caption{Multi Variable Regression - Gradient Descent (\texttt{epochs}=1000, \texttt{lr}=1e-1)}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.7]{multivar_closedform.png}
+  \caption{Multi Variable Regression - Closed Form}
+\end{figure}
+
+\subsubsection{}
+Code for the functions \verb!multivar_reg_grad()! and \verb!multivar_reg_closedform()! updated in notebook.
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.7]{multivar_reg_grad.png}
+  \caption{Regularization - Gradient Descent (\texttt{epochs}=1000, \texttt{lr}=1e-1, \texttt{lamda}=0.001)}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.7]{multivar_reg_closedform.png}
+  \caption{Regularization - Closed Form (\texttt{lamda}=0.001)}
+\end{figure}
+
+
 \end{document}
