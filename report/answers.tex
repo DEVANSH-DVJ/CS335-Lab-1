@@ -48,36 +48,48 @@
 
 \newpage
 \section{Ordinary Least Squares (OLS) Regression in one variable}
+Notation: \\
+$\mathbf{X}$ is $N \times 1$ vector, \\
+$\mathbf{Y}$ is $N \times 1$ vector, \\
+$\mathbf{1_N}$ is $N \times 1$ vector (all 1s), \\
+$x_i$ is scalar (i$^\text{th}$ observed sample), \\
+$y_i$ is scalar (i$^\text{th}$ observed output), \\
+$w$ is scalar, \\
+$b$ is scalar.
 
 \subsection{CS337: Theory}
 \begin{equation*}
   \begin{aligned}
-    mse(w,b)                             & = \frac{1}{N} \sum_{i=1}^N ((w x_i + b) - y_i)^2                                                                                 \\
-    \frac{\partial mse(w,b)}{\partial w} & = \frac{1}{N} \sum_{i=1}^N 2 \cdot ((w x_i + b) - y_i) \cdot x_i                                                                 \\
-    \frac{\partial mse(w,b)}{\partial b} & = \frac{1}{N} \sum_{i=1}^N 2 \cdot ((w x_i + b) - y_i)                                                                           \\
-    \nabla mse(w,b)                      & = \twoxone{\frac{\partial mse (w,b)}{\partial w}}{\frac{\partial mse (w,b)}{\partial b}}                                         \\
-                                         & = \twoxone{\frac{1}{N} \sum_{i=1}^N 2 \cdot ((w x_i + b) - y_i) \cdot x_i}{\frac{1}{N} \sum_{i=1}^N 2 \cdot ((w x_i + b) - y_i)} \\
-                                         & = \frac{2}{N} \twoxone{\sum_{i=1}^N ((w x_i + b) - y_i) \cdot x_i}{\sum_{i=1}^N ((w x_i + b) - y_i)}
+    mse(w,b)                             & = \frac{1}{N} \sum_{i=1}^N ((w x_i + b) - y_i)^2                                                                                                    \\
+    \frac{\partial mse(w,b)}{\partial w} & = \frac{1}{N} \sum_{i=1}^N 2 \ ((w x_i + b) - y_i) \ x_i                                                                                            \\
+                                         & = \frac{2}{N} \sum_{i=1}^N (w x_i + b - y_i) \ x_i                                                                                                  \\
+                                         & = \frac{2}{N} \ \text{dot}(w \mathbf{X} + b \mathbf{1_N} - \mathbf{Y}), \mathbf{X})                                                                 \\
+    \frac{\partial mse(w,b)}{\partial b} & = \frac{1}{N} \sum_{i=1}^N 2 \ ((w x_i + b) - y_i)                                                                                                  \\
+                                         & = \frac{2}{N} \sum_{i=1}^N (w x_i + b - y_i)                                                                                                        \\
+                                         & = \frac{2}{N} \ \text{sum}(w \mathbf{X} + b \mathbf{1_N} - \mathbf{Y})                                                                              \\
+    \nabla mse(w,b)                      & = \twoxone{\frac{\partial mse (w,b)}{\partial w}}{\frac{\partial mse (w,b)}{\partial b}}                                                            \\
+                                         & = \frac{2}{N} \twoxone{\text{dot}(w \mathbf{X} + b \mathbf{1_N} - \mathbf{Y}), \mathbf{X})}{\text{sum}(w \mathbf{X} + b \mathbf{1_N} - \mathbf{Y})}
   \end{aligned}
 \end{equation*}
 
 \subsection{CS335: Lab}
 \subsubsection{}
-Present in notebook
+Code for the function \verb!split_data()! updated in notebook.
 
 \subsubsection{}
-Present in notebook
+Code for the function \verb!mse_single_var()! updated in notebook.
 
 \subsubsection{}
+Code for the functions \verb!singlevar_grad()! and \verb!singlevar_closedform()! updated in notebook.
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=0.6]{singlevar_grad.png}
-  \caption{Single Variable - Gradient Descent (epochs=1000)}
+  \includegraphics[scale=0.7]{singlevar_grad.png}
+  \caption{Single Variable Regression - Gradient Descent (\texttt{epochs}=1000, \texttt{lr}=1e-2)}
 \end{figure}
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=0.6]{singlevar_grad.png}
-  \caption{Single Variable - Closed Form}
+  \includegraphics[scale=0.7]{singlevar_closedform.png}
+  \caption{Single Variable Regression - Closed Form}
 \end{figure}
 
 \subsubsection{}
