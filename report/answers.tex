@@ -248,7 +248,7 @@ Code for the functions \verb!multivar_reg_grad()! and \verb!multivar_reg_closedf
 \end{equation}
 
 \subsubsection{}
-Comparing \eqref{eq1} and \eqref{eq2},
+Comparing \eqref{eq1} and \eqref{eq2}, \\
 \begin{equation*}
   \begin{aligned}
     \sigma_N^2 & = \frac{1}{1 + \sum_i x_i^2}                                     \\
@@ -303,5 +303,54 @@ In Closed form of OLS, we might have to invert a non-invertible matrix. $X^T X$ 
 Here, we take inverse of $X^T X + \lambda I$ (reminds of ridge regression). Even if we have features which aren't linearly independent, $X^T X + \lambda I$ would be invertible due to presence of $I$ which is a full rank matrix.
 
 
+\newpage
+\section{Conclusion}
+Comparing the seven methods for the assignment problem:
+\begin{enumerate}
+  \item \textbf{Single Variable OLS Regression Gradient Descent} \\
+        Gradient Descent can be slow; \\
+        Need to set hyper-parameters - epochs and learning rate; \\
+        Not a nice fit (Validation error approx 0.14)
+  \item \textbf{Single Variable OLS Regression Closed Form} \\
+        Closed form computation is fast; \\
+        No hyper-parameters; \\
+        Not a nice fit (Validation error approx 0.14)
+  \item \textbf{Multi Variable OLS Regression Gradient Descent} \\
+        Gradient Descent can be slow; \\
+        Need to set hyper-parameters - epochs and learning rate; \\
+        Nice fit (Validation error approx 0.03); \\
+        Can give solution when the features aren't linearly independent
+  \item \textbf{Multi Variable OLS Regression Closed Form} \\
+        Closed form computation is fast; \\
+        No hyper-parameters; \\
+        Nice fit (Validation error approx 0.03); \\
+        Can't give solution when the features aren't linearly independent
+  \item \textbf{Multi Variable Regularized (Ridge) Regression Gradient Descent} \\
+        Gradient Descent can be slow; \\
+        Need to set hyper-parameters - lambda, epochs and learning rate; \\
+        Nice fit (Validation error approx 0.03); \\
+        Can give solution when the features aren't linearly independent
+  \item \textbf{Multi Variable Regularized (Ridge) Regression Closed Form} \\
+        Closed form computation is fast; \\
+        Need to set hyper-parameter - lambda; \\
+        Nice fit (Validation error approx 0.03); \\
+        Can give solution when the features aren't linearly independent
+  \item \textbf{Multi Variable Bayesian Regression Closed Form} \\
+        Closed form computation is fast; \\
+        Need to set hyper-parameter - prior and sigma; \\
+        Nice fit (Validation error approx 0.03); \\
+        Can give solution when the features aren't linearly independent
+\end{enumerate}
+
+Only method which doesn't require hyper-parameters and gives a good fit is Method 4 - Multi Variable OLS Regression Closed Form. However, it fails to give a solution when the features aren't linearly independent. \\
+
+Now that we have to set some hyper-parameter, we can decide the method based on number of features. \\
+In all closed forms, we compute inverse of a $d \times d$ matrix. The complexity of this computation is $\mathcal{O}(d^3)$. Thus, this method might be infeasible for large number of features. \\
+
+For large number of features, if the features are known to be linearly independent then we can use Method 3 - Multi Variable OLS Regression Gradient Descent, else we should prefer Method 5 - Multi Variable Regularized (Ridge) Regression Gradient Descent. \\
+
+For small number of features (like in this assignment), closed form solutions would be faster and more accurate. If we have some prior for the parameter then we can use Method 7 - Multi Variable Bayesian Regression Closed Form or we can try different lambdas for Method 6 - Multi Variable Regularized (Ridge) Regression Closed Form. \\
+
+For this assignment, I prefer Method 6 - Multi Variable Regularized (Ridge) Regression Closed Form.
 
 \end{document}
