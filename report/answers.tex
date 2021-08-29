@@ -127,7 +127,7 @@ Assuming that partial derivative is $1 \times d$ row vector (numerator layout).
     \frac{\partial mse(\mathbf{W},b)}{\partial \mathbf{W}} & = \frac{1}{N} \sum_{i=1}^N 2 \ ((\mathbf{W}^T \mathbf{x_i} + b) - y_i) \ \mathbf{x_i}^T                  \\
                                                            & = \frac{2}{N} \sum_{i=1}^N (\mathbf{W}^T \mathbf{x_i} + b - y_i) \ \mathbf{x_i}^T                        \\
                                                            & = \frac{2}{N} \ \text{dot}(\text{dot}(\mathbf{X}, \mathbf{W}) + b \mathbf{1_N} - \mathbf{Y}, \mathbf{X}) \\
-    \frac{\partial mse(\mathbf{W},b)}{\partial b}          & = \frac{1}{N} \sum_{i=1}^N 2 \cdot ((\mathbf{W}^T \mathbf{x_i} + b) - y_i)                               \\
+    \frac{\partial mse(\mathbf{W},b)}{\partial b}          & = \frac{1}{N} \sum_{i=1}^N 2 \ ((\mathbf{W}^T \mathbf{x_i} + b) - y_i)                                   \\
                                                            & = \frac{2}{N} \sum_{i=1}^N (\mathbf{W}^T \mathbf{x_i} + b - y_i)                                         \\
                                                            & = \frac{2}{N} \ \text{sum}(\text{dot}(\mathbf{X}, \mathbf{W})  + b \mathbf{1_N} - \mathbf{Y})
   \end{aligned}
@@ -141,7 +141,7 @@ Assuming that partial derivative is $1 \times d$ row vector (denominator layout)
     \frac{\partial mse(\mathbf{W},b)}{\partial \mathbf{W}} & = 2 \lambda \mathbf{W}^T + \frac{1}{N} \sum_{i=1}^N 2 \ ((\mathbf{W}^T \mathbf{x_i} + b) - y_i) \ \mathbf{x_i}^T                  \\
                                                            & = 2 \lambda \mathbf{W}^T + \frac{2}{N} \sum_{i=1}^N (\mathbf{W}^T \mathbf{x_i} + b - y_i) \ \mathbf{x_i}^T                        \\
                                                            & = 2 \lambda \mathbf{W}^T + \frac{2}{N} \ \text{dot}(\text{dot}(\mathbf{X}, \mathbf{W}) + b \mathbf{1_N} - \mathbf{Y}, \mathbf{X}) \\
-    \frac{\partial mse(\mathbf{W},b)}{\partial b}          & = \frac{1}{N} \sum_{i=1}^N 2 \cdot ((\mathbf{W}^T \mathbf{x_i} + b) - y_i)                                                        \\
+    \frac{\partial mse(\mathbf{W},b)}{\partial b}          & = \frac{1}{N} \sum_{i=1}^N 2 \ ((\mathbf{W}^T \mathbf{x_i} + b) - y_i)                                                            \\
                                                            & = \frac{2}{N} \sum_{i=1}^N (\mathbf{W}^T \mathbf{x_i} + b - y_i)                                                                  \\
                                                            & = \frac{2}{N} \ \text{sum}(\text{dot}(\mathbf{X}, \mathbf{W})  + b \mathbf{1_N} - \mathbf{Y})
   \end{aligned}
@@ -280,7 +280,7 @@ Also, we converge towards the true value as data starts to dominate over the pri
 \begin{equation*}
   \begin{aligned}
      & \frac{d}{dw} \bigg( \sum_{i=1}^N (y_i - wx_i)^2 \bigg) \bigg\vert_{w=w^*} = 0 \implies 2 \bigg( \sum_{i=1}^N (y_i - w^* x_i) x_i \bigg) = 0 \\
-     & w^* = \frac{\sum_i x_i y_i}{\sum_i x_i^2} (= w^*_{MLE})
+     & w^* = \frac{\sum_i x_i y_i}{\sum_i x_i^2} \ (= w^*_{MLE})
   \end{aligned}
 \end{equation*}
 
@@ -347,7 +347,7 @@ Only method which doesn't require hyper-parameters and gives a good fit is Metho
 Now that we have to set some hyper-parameter, we can decide the method based on number of features. \\
 In all closed forms, we compute inverse of a $d \times d$ matrix. The complexity of this computation is $\mathcal{O}(d^3)$. Thus, this method might be infeasible for large number of features. \\
 
-For large number of features, if the features are known to be linearly independent then we can use Method 3 - Multi Variable OLS Regression Gradient Descent, else we should prefer Method 5 - Multi Variable Regularized (Ridge) Regression Gradient Descent. \\
+For large number of features, if the features are known to be linearly independent then we can use Method 3 - Multi Variable OLS Regression Gradient Descent, else we should prefer Method 5 - Multi Variable Regularized (Ridge) Regression Gradient Descent (this would remove redundant features). \\
 
 For small number of features (like in this assignment), closed form solutions would be faster and more accurate. If we have some prior for the parameter then we can use Method 7 - Multi Variable Bayesian Regression Closed Form or we can try different lambdas for Method 6 - Multi Variable Regularized (Ridge) Regression Closed Form. \\
 
