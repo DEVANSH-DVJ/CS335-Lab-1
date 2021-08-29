@@ -37,6 +37,8 @@
         #2
     \end{pmatrix}
 }
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
 
 \begin{document}
 
@@ -185,6 +187,121 @@ Code for the functions \verb!multivar_reg_grad()! and \verb!multivar_reg_closedf
   \includegraphics[scale=0.7]{multivar_reg_closedform.png}
   \caption{Regularization - Closed Form (\texttt{lamda}=0.001)}
 \end{figure}
+
+
+\newpage
+\section{Bayesian Linear Regression}
+
+\subsection{CS337: Theory}
+\subsubsection{}
+\begin{equation*}
+  \begin{aligned}
+    p(w) & = \frac{1}{\sqrt{2 \pi}} \exp \bigg( -\frac{(w - \mu_0)^2}{2} \bigg)
+  \end{aligned}
+\end{equation*}
+
+\subsubsection{}
+\begin{equation*}
+  \begin{aligned}
+    p(y | x; w) & = \frac{1}{\sqrt{2 \pi}} \exp \bigg( -\frac{(y - wx)^2}{2} \bigg)
+  \end{aligned}
+\end{equation*}
+
+\subsubsection{}
+\begin{equation*}
+  \begin{aligned}
+    p(\mathcal{D}; w) & = \prod_{i=1}^N \frac{1}{\sqrt{2 \pi}} \exp \bigg( -\frac{(y_i - wx_i)^2}{2} \bigg) \\
+                      & = (2 \pi)^{-N/2} \exp \bigg( -\frac{\sum_{i=1}^N (y_i - wx_i)^2}{2} \bigg)
+  \end{aligned}
+\end{equation*}
+
+\subsubsection{}
+\begin{equation*}
+  \begin{aligned}
+    p(w | \mathcal{D})      & = \frac{p(\mathcal{D} | w) p(w)}{\int_{-\infty}^{\infty} p(\mathcal{D} | w) p(w) dw}           \\
+    p(\mathcal{D} | w) p(w) & = (2 \pi)^{-(N+1)/2} \exp \bigg( -\frac{(w - \mu_0)^2 + \sum_{i=1}^N (y_i - wx_i)^2}{2} \bigg) \\
+  \end{aligned}
+\end{equation*}
+
+\subsubsection{}
+\begin{equation*}
+  \begin{aligned}
+    p(w | \mathcal{D}) & \propto \exp \bigg( -\frac{(w - \mu_0)^2 + \sum_{i=1}^N (y_i - wx_i)^2}{2} \bigg) \\
+  \end{aligned}
+\end{equation*}
+
+\subsubsection{}
+\begin{equation}
+  \begin{aligned}
+    \label{eq1}
+    p(w | \mathcal{D}) & \propto \exp \bigg( -\frac{w^2 (1 + \sum_i x_i^2) - 2w(\mu_0 + \sum_i x_i y_i) + (\mu_0^2 + \sum_i y_i^2)}{2} \bigg) \\
+  \end{aligned}
+\end{equation}
+
+\subsubsection{}
+\begin{equation}
+  \begin{aligned}
+    \label{eq2}
+    p(w | \mathcal{D}) & = \mathcal{N}(\mu_N, \sigma_N^2) \propto \exp \bigg( -\frac{(w - \mu_N)^2}{2 \sigma_N^2} \bigg)                                 \\
+    p(w | \mathcal{D}) & \propto \exp \bigg( -\frac{w^2 (\frac{1}{\sigma_N^2}) - 2w (\frac{\mu_N}{\sigma_N^2}) + (\frac{\mu_N^2}{\sigma_N^2})}{2} \bigg) \\
+  \end{aligned}
+\end{equation}
+
+\subsubsection{}
+Comparing \eqref{eq1} and \eqref{eq2},
+\begin{equation*}
+  \begin{aligned}
+    \sigma_N^2 & = \frac{1}{1 + \sum_i x_i^2}                                     \\
+    \mu_N      & = (\mu_0 + \sum_i x_i y_i) \sigma_N^2                            \\
+               & = \frac{\mu_0 + \sum_i x_i y_i}{1 + \sum_i x_i^2} & (= w^*_{BE})
+  \end{aligned}
+\end{equation*}
+
+\subsubsection{}
+As $N \to \infty$, $\sum_i x_i^2 \gg 1$ and $\sum_i x_i y_i \gg \mu_0$. \\
+$\sigma_N^2 \to \dfrac{1}{\sum_i x_i^2} \to 0$ ($x_i$s are iid, so $\sum_i x_i^2$ can never be convergent)\\
+$\mu_N \to \dfrac{\sum_i x_i y_i}{\sum_i x_i^2} = \dfrac{\sum_i x_i (w_{\text{true}} x_i + \epsilon_i)}{\sum_i x_i^2} \to w_{\text{true}}$ ($\epsilon_i \sim \mathcal{N}(0, 1)$ and $E[y_i] = w_{\text{true}} x_i$)
+
+\subsubsection{}
+As we sample more and more data, we get more confident about the estimated value of $w$, and thus the variance $(\sigma_N^2)$ tends to zero, i.e. our estimate for $w$ is converging. \\
+Also, we converge towards the true value as data starts to dominate over the prior information, thus the mean $(\mu_N)$ tends towards the $w_{\text{true}}$.
+
+\subsection{MLE Estimate}
+\subsubsection{}
+\begin{equation*}
+  \begin{aligned}
+    w^* & = \argmax_w \ p(\mathcal{D}; w)                                                                                                            \\
+        & = \argmax_w \ (2 \pi)^{-N/2} \exp \bigg( -\frac{\sum_{i=1}^N (y_i - wx_i)^2}{2} \bigg)                                                     \\
+        & = \argmax_w \ \exp \bigg( -\frac{\sum_{i=1}^N (y_i - wx_i)^2}{2} \bigg)                                                                    \\
+        & = \argmax_w \ -\frac{\sum_{i=1}^N (y_i - wx_i)^2}{2}                                   & \text{(ln is monotonically increasing function})  \\
+        & = \argmin_w \ \sum_{i=1}^N (y_i - wx_i)^2                                              & \text{(-2x is monotonically decreasing function}) \\
+  \end{aligned}
+\end{equation*}
+\begin{equation*}
+  \begin{aligned}
+     & \frac{d}{dw} \bigg( \sum_{i=1}^N (y_i - wx_i)^2 \bigg) \bigg\vert_{w=w^*} = 0 \implies 2 \bigg( \sum_{i=1}^N (y_i - w^* x_i) x_i \bigg) = 0 \\
+     & w^* = \frac{\sum_i x_i y_i}{\sum_i x_i^2} (= w^*_{MLE})
+  \end{aligned}
+\end{equation*}
+
+\subsubsection{}
+$\lim_{N \to \infty} w^*_{BE} = w^*_{MLE} = \dfrac{\sum_i x_i y_i}{\sum_i x_i^2}$. \\
+For infinite data, the prior becomes insignificant. \\
+Maximum Likelihood Estimate (MLE) and Bayesian Estimate (BE) are equivalent and both converge towards the true value $w_{\text{true}}$.
+
+\subsection{CS335: Lab}
+\subsubsection{}
+Code for the function \verb!bayesion_lr()! updated in notebook.
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.7]{bayesion_lr.png}
+  \caption{Bayesian Linear Regression - Closed Form (\texttt{sigma}=0.1)}
+\end{figure}
+
+\subsubsection{}
+In Closed form of OLS, we might have to invert a non-invertible matrix. $X^T X$ would be non-invertible when features aren't linearly independent. \\
+Here, we take inverse of $X^T X + \lambda I$ (reminds of ridge regression). Even if we have features which aren't linearly independent, $X^T X + \lambda I$ would be invertible due to presence of $I$ which is a full rank matrix.
+
 
 
 \end{document}
